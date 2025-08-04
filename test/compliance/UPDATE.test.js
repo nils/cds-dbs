@@ -23,6 +23,30 @@ describe('UPDATE', () => {
       expect(result.string).to.equal('updated')
     })
 
+    test('string as template string parameter', async () => {
+      const { string } = cds.entities('basic.literals')
+      const literal = 'updated'
+      await UPDATE(string).set`string = ${literal}`;
+      const result = await SELECT.one.from(string)
+      expect(result.string).to.equal('updated')
+    })
+
+    test('Date object as template string parameter', async () => {
+      const { date } = cds.entities('basic.literals')
+      const literal = new Date('2025-08-02')
+      await UPDATE(date).set`date = ${literal}`;
+      const result = await SELECT.one`max(date) as date`.from(date)
+      expect(result.date).to.equal('2025-08-02')
+    })
+
+    test('ISO date string as template string parameter', async () => {
+      const { date } = cds.entities('basic.literals')
+      const literal = '2025-08-02'
+      await UPDATE(date).set`date = ${literal}`;
+      const result = await SELECT.one`max(date) as date`.from(date)
+      expect(result.date).to.equal('2025-08-02')
+    })
+
     test('number', async () => {
       const { number } = cds.entities('basic.literals')
       await INSERT({ integer32: 0 }).into(number)
